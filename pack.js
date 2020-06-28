@@ -48,7 +48,6 @@ var pack;
       throw new Error('请输入正确的模块名称');
     }
 
-    // 模块已加载，直接返回模块
     var mod = modulesMap[id];
 
     if (mod) {
@@ -56,21 +55,17 @@ var pack;
     }
 
     var factory = factoryMap[id];
-    // 工厂函数不存在，加载工厂函数
     if (!factory) {
       return opener.async.call(this, id, function () {
         mod = opener(id);
         onload && onload.call(global, mod);
       }, onerror);
     } else {
-      // 工厂函数存在，运行工厂函数初始化模块
       mod = modulesMap[id] = {
         exports: {}
       };
 
-      //
       // factory: function OR value
-      //
       var ret = (typeof factory === 'function') ? factory.apply(mod, [opener, mod.exports, mod]) : factory;
 
       if (ret) {
@@ -90,9 +85,6 @@ var pack;
     var queue = loadingMap[id] || (loadingMap[id] = []);
 
     typeof onload === 'function' && queue.push(onload);
-    onerror=function(id){
-      console.log('错误',id)
-    }
     if (id in loadingStateMap) {
       loadingStateMap[id] && loadOver(id);
     } else {
@@ -120,7 +112,7 @@ var pack;
   };
 
   // async config
-  opener.baseUrl = '/chart/';
+  opener.baseUrl = '';
   opener.timeout = 5000;
 
   var loadScripts = function (id, url, onerror) {
