@@ -1,4 +1,4 @@
-# pack-code
+# pack-opener
 
 ## 简介
 modJS是一套轻量级前端模块加载解决方案，用于加载js,json,css或图片和文本文件，js依赖采用CMD模式。
