@@ -3,15 +3,13 @@
  * @author kalo
  * ver: 1.0.0
  * update: 2020/06/28
- * https://github.com/vkalo/pack
+ * https://github.com/fex-team/mod
  */
 
 /* eslint-disable no-unused-vars */
 var opener;
 var pack;
-
 (function (global) {
-
   // avoid duplicate definitions
   if (opener) {
     return;
@@ -19,27 +17,27 @@ var pack;
 
   var head = document.getElementsByTagName('head')[0];
   var loadingMap = {}; //callback
-  var loadingStateMap = {}; //async state 
+  var loadingStateMap = {}; //async state
   var factoryMap = {};
   var modulesMap = {};
   var resourceMap = {};
-
+  window.loadingMap = loadingMap;
+  window.loadingStateMap = loadingStateMap;
   // packing function
   pack = function (id, deps, factory) {
     factoryMap[id] = factory;
 
-    resourceMap[id] = (deps || []);
+    resourceMap[id] = deps || [];
 
     deps.forEach(function (id) {
       opener.async(id);
     });
-
     var check = checkUp(id);
 
     if (!check()) {
       deps.forEach(function (childId) {
         loadingStateMap[childId] || loadingMap[childId].push(check);
-      })
+      });
     }
   };
   // loading moudle function
@@ -56,17 +54,25 @@ var pack;
 
     var factory = factoryMap[id];
     if (!factory) {
-      return opener.async.call(this, id, function () {
-        mod = opener(id);
-        onload && onload.call(global, mod);
-      }, onerror);
+      return opener.async.call(
+        this,
+        id,
+        function () {
+          mod = opener(id);
+          onload && onload.call(global, mod);
+        },
+        onerror,
+      );
     } else {
       mod = modulesMap[id] = {
-        exports: {}
+        exports: {},
       };
 
       // factory: function OR value
-      var ret = (typeof factory === 'function') ? factory.apply(mod, [opener, mod.exports, mod]) : factory;
+      var ret =
+        typeof factory === 'function'
+          ? factory.apply(mod, [opener, mod.exports, mod])
+          : factory;
 
       if (ret) {
         mod.exports = ret;
@@ -88,7 +94,7 @@ var pack;
     if (id in loadingStateMap) {
       loadingStateMap[id] && loadOver(id);
     } else {
-      loadingStateMap[id] = false
+      loadingStateMap[id] = false;
       switch (id.split('.').pop()) {
         case 'js': {
           loadScripts(id, url, onerror);
@@ -134,21 +140,21 @@ var pack;
         factoryMap[id] = JSON.parse(xhr.responseText);
         loadOver(id);
       }
-    }
+    };
     xhr.send();
   };
 
-  var loadCss = function (id, url,onerror) {
+  var loadCss = function (id, url, onerror) {
     var link = document.createElement('link');
     link.href = url;
     link.rel = 'stylesheet';
     link.type = 'text/css';
     head.appendChild(link);
     typeof onerror === 'function' && loadError(id, link, onerror);
-    link.onload = function () { 
+    link.onload = function () {
       factoryMap[id] = true;
       loadOver(id);
-     }
+    };
   };
 
   var loadOver = function (id) {
@@ -161,7 +167,7 @@ var pack;
       }
       delete loadingMap[id];
     }
-  }
+  };
 
   var loadError = function (id, element, onerror) {
     var tid = setTimeout(function () {
@@ -179,25 +185,25 @@ var pack;
 
     if ('onload' in element) {
       element.onload = onload;
-    }
-    else {
+    } else {
       element.onreadystatechange = function () {
         if (this.readyState === 'loaded' || this.readyState === 'complete') {
           onload();
         }
       };
     }
-  }
+  };
 
   // check resource loaded
   var checkUp = function (id) {
-    var resourceList = resourceMap[id].filter(function (i) { return !resourceMap[i] });
+    var resourceList = resourceMap[id].filter(function (i) {
+      return !resourceMap[i];
+    });
 
     return function () {
       if (loadingStateMap[id]) {
         return true;
       }
-
       for (var i = resourceList.length - 1; i >= 0; i--) {
         var resourceId = resourceList[i];
         if (!loadingStateMap[resourceId]) {
@@ -207,6 +213,17 @@ var pack;
 
       loadOver(id);
       return true;
+    };
+  };
+
+  pack.packing = function (id, dependent, text) {
+    if (typeof dependent === 'string') {
+      text ? (dependent = [dependent]) : (text = dependent, dependent = [])
     }
+    return 'pack(' + id + ',[' + dependent.map(i => `'${i}'`).toString() + '], function (opener, exports, module){'
+      + text +
+      '});'
   }
 })(this);
+
+module && (module.exports = { opener, pack });
