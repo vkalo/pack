@@ -1,6 +1,6 @@
 {
   "name": "pack-opener",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "pack code like requirejs",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,8 @@
   },
   "keywords": [
     "require",
-    "mod"
+    "mod",
+    "pack-opener-plugin"
   ],
   "author": "vkalo",
   "license": "ISC",

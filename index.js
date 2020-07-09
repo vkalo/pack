@@ -1,9 +1,9 @@
 /**
  * @file: pack.js
  * @author kalo
- * ver: 1.0.0
- * update: 2020/06/28
- * https://github.com/fex-team/mod
+ * ver: 1.0.1
+ * update: 2020/07/09
+ * https://github.com/vkalo/pack
  */
 
 /* eslint-disable no-unused-vars */
@@ -21,8 +21,7 @@ var pack;
   var factoryMap = {};
   var modulesMap = {};
   var resourceMap = {};
-  window.loadingMap = loadingMap;
-  window.loadingStateMap = loadingStateMap;
+
   // packing function
   pack = function (id, deps, factory) {
     factoryMap[id] = factory;
@@ -49,6 +48,7 @@ var pack;
     var mod = modulesMap[id];
 
     if (mod) {
+      onload && onload.call(global, mod);
       return mod.exports;
     }
 
@@ -77,7 +77,7 @@ var pack;
       if (ret) {
         mod.exports = ret;
       }
-
+      onload && onload.call(global, mod.exports);
       return mod.exports;
     }
   };
@@ -116,6 +116,11 @@ var pack;
       }
     }
   };
+
+  // query exist
+  opener.exist = function (id) {
+    return id in modulesMap || id in factoryMap
+  }
 
   // async config
   opener.baseUrl = '';
@@ -216,14 +221,6 @@ var pack;
     };
   };
 
-  pack.packing = function (id, dependent, text) {
-    if (typeof dependent === 'string') {
-      text ? (dependent = [dependent]) : (text = dependent, dependent = [])
-    }
-    return 'pack(' + id + ',[' + dependent.map(i => `'${i}'`).toString() + '], function (opener, exports, module){'
-      + text +
-      '});'
-  }
 })(this);
 
 module && (module.exports = { opener, pack });
