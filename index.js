@@ -53,7 +53,7 @@ var pack;
     }
 
     var factory = factoryMap[id];
-    if (!factory) {
+    if (!factory || !loadingStateMap[id]) {
       return opener.async.call(
         this,
         id,
