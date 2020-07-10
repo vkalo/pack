@@ -48,7 +48,7 @@ var pack;
     var mod = modulesMap[id];
 
     if (mod) {
-      onload && onload.call(global, mod);
+      onload && onload.call(global, mod.exports);
       return mod.exports;
     }
 
