@@ -201,13 +201,14 @@ var pack;
 
   // check resource loaded
   var checkUp = function (id) {
+    const resourceList = resourceMap[id];
     return function () {
       if (loadingStateMap[id]) {
         return true;
       }
       for (var i = resourceList.length - 1; i >= 0; i--) {
         var resourceId = resourceList[i];
-        if (!loadingStateMap[resourceId] && !factoryMap[resourceId]) {
+        if (!loadingStateMap[resourceId]) {
           return false;
         }
       }
