@@ -220,4 +220,4 @@ var pack;
 
 })(this);
 
-module && (module.exports = { opener, pack });
+typeof module ==='object' && (module.exports = { opener, pack });
