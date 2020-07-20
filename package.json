@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vkalo/pack.git"
+    "url": "git+https://github.com/vkalo/pack-opener.git"
   },
   "keywords": [
     "require",
@@ -18,7 +18,7 @@
   "author": "vkalo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/vkalo/pack/issues"
+    "url": "https://github.com/vkalo/pack-opener/issues"
   },
-  "homepage": "https://github.com/vkalo/pack#readme"
+  "homepage": "https://github.com/vkalo/pack-opener#readme"
 }
